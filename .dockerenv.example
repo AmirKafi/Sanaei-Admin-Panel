@@ -1,0 +1,18 @@
+# Docker environment variables example
+# Copy this file to .env and update with your values
+
+NODE_ENV=production
+
+# Database
+DATABASE_URL=file:/app/data/prisma.db
+
+# NextAuth Configuration
+NEXTAUTH_SECRET=your-random-secret-key-here-change-in-production
+NEXTAUTH_URL=http://localhost:3000
+
+# Admin Panel Settings
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=your-secure-password-here
+
+# Optional: API Keys and other configuration
+# Add your other environment variables below

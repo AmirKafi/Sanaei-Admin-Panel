@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sanaei-admin-panel
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=file:/app/data/prisma.db
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-your-secret-key-change-this-in-production}
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
+    volumes:
+      - sanaei_data:/app/data
+    restart: unless-stopped
+    networks:
+      - sanaei-network
+
+volumes:
+  sanaei_data:
+    driver: local
+
+networks:
+  sanaei-network:
+    driver: bridge

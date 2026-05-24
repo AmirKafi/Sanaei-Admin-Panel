@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Inbound {
+  id           Int         @id @default(autoincrement())
+  panelId      String?     @unique
+  remark       String
+  tag          String?
+  protocol     String
+  port         Int
+  network      String
+  tls          Boolean
+  enabled      Boolean     @default(true)
+  clientCount  Int         @default(0)
+  trafficUp    BigInt      @default(0)
+  trafficDown  BigInt      @default(0)
+  expiryTime   DateTime?   
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  clientLinks  ClientInbound[]
+}
+
+model Client {
+  id             Int              @id @default(autoincrement())
+  uuid           String           @unique
+  name           String
+  totalQuota     BigInt
+  enabled        Boolean          @default(true)
+  expiryTime     DateTime?        
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  clientLinks    ClientInbound[]
+}
+
+model ClientInbound {
+  id           Int      @id @default(autoincrement())
+  client       Client   @relation(fields: [clientId], references: [id])
+  clientId     Int
+  inbound      Inbound  @relation(fields: [inboundId], references: [id])
+  inboundId    Int
+  remoteId     String?  
+  remoteEmail  String?  
+  remotePass   String?  
+  enabled      Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  usages       UsageSnapshot[]
+
+  @@unique([clientId, inboundId])
+}
+
+model UsageSnapshot {
+  id              Int          @id @default(autoincrement())
+  clientInbound   ClientInbound @relation(fields: [clientInboundId], references: [id])
+  clientInboundId Int
+  up              BigInt       @default(0)
+  down            BigInt       @default(0)
+  recordedAt      DateTime     @default(now())
+}
+
+model Setting {
+  id                  Int      @id @default(autoincrement())
+  key                 String   @unique
+  value               String
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
